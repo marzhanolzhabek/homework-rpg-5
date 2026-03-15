@@ -1,0 +1,39 @@
+package com.narxoz.rpg;
+
+import com.narxoz.rpg.decorator.*;
+import com.narxoz.rpg.enemy.BossEnemy;
+import com.narxoz.rpg.facade.AdventureResult;
+import com.narxoz.rpg.facade.DungeonFacade;
+import com.narxoz.rpg.hero.HeroProfile;
+
+public class Main {
+    public static void main(String[] args) {
+        System.out.println("=== Homework 5 Demo: Decorator + Facade ===\n");
+
+        HeroProfile hero = new HeroProfile("Guts", 100);
+        BossEnemy boss = new BossEnemy("Zodd", 120, 15);
+
+        AttackAction basic = new BasicAttack("Sword Strike", 15);
+        AttackAction enhanced = new FireRuneDecorator(
+                new PoisonCoatingDecorator(
+                        new CriticalFocusDecorator(basic)
+                )
+        );
+
+        System.out.println("--- Decorator Preview ---");
+        System.out.println("Action: " + enhanced.getActionName());
+        System.out.println("Total Damage: " + enhanced.getDamage());
+        System.out.println("Effects: " + enhanced.getEffectSummary());
+
+        System.out.println("\n--- Facade Preview ---");
+        DungeonFacade facade = new DungeonFacade().setRandomSeed(42L);
+        AdventureResult result = facade.runAdventure(hero, boss, enhanced);
+
+        System.out.println("Winner: " + result.getWinner());
+        System.out.println("Rounds: " + result.getRounds());
+        System.out.println("Reward: " + result.getReward());
+        result.getLog().forEach(System.out::println);
+
+        System.out.println("\n=== Demo Complete ===");
+    }
+}
